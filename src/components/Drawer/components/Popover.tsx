@@ -1,16 +1,14 @@
 import { ReactPortal } from "../../Portal";
 import { useDrawerContext } from "../hooks/useDrawerContext";
 
-interface PopoverProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface PopoverProps extends React.PropsWithChildren {}
 
-export function Popover({ children, ...rest }: PopoverProps) {
+export function Popover({ children }: PopoverProps) {
   const { visibility } = useDrawerContext();
 
-  if (visibility === false) return null;
-
   return (
-    <ReactPortal key="react-drawer-portal" {...rest}>
-      {children}
+    <ReactPortal key="react-drawer-portal">
+      {visibility === true && children}
     </ReactPortal>
   );
 }
