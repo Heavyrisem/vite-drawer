@@ -1,5 +1,4 @@
 import React from "react";
-import { cn } from "../../../utils/classUtil";
 import { getAxis, registDragEvent } from "../utils";
 import { useDrawerContext } from "../hooks/useDrawerContext";
 

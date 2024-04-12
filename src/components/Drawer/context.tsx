@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useControlled } from "../../hooks/useControlled";
+import usePrevious from "../../hooks/usePrevious";
 
 interface DrawerContextState {
   direction: "top" | "left" | "right" | "bottom";
   dragDelta: number;
   setDragDelta: React.Dispatch<React.SetStateAction<number>>;
-  visibility: boolean;
-  setVisibility: (visibility: boolean) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
@@ -15,8 +14,6 @@ export const DrawerContext = React.createContext<DrawerContextState>({
   direction: "bottom",
   dragDelta: 0,
   setDragDelta: () => {},
-  visibility: false,
-  setVisibility: () => {},
   open: false,
   setOpen: () => {},
 });
@@ -38,27 +35,18 @@ export function DrawerContextProvider({
 }: DrawerContextProviderProps) {
   const [open, setOpen] = useControlled(defaultOpen, openProps);
   const [dragDelta, setDragDelta] = useState(0);
-  const [visibility, setVisibility] = useState(open);
-
-  useEffect(() => console.log({ visibility }), [visibility]);
-
-  useEffect(() => {
-    if (open) setVisibility(open);
-  }, [open]);
 
   const handleOpen = useCallback(
     (value: boolean) => {
       setOpen(value);
       onOpen?.(value);
     },
-    [setOpen, onOpen],
+    [setOpen, onOpen]
   );
 
   return (
     <DrawerContext.Provider
       value={{
-        visibility,
-        setVisibility,
         open,
         setOpen: handleOpen,
         direction,

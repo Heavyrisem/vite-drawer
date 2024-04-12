@@ -1,3 +1,4 @@
+import { Backdrop } from "./components/Backdrop";
 import { Body } from "./components/Body";
 import { DragBar } from "./components/DragBar";
 import { Popover } from "./components/Popover";
@@ -8,4 +9,5 @@ export const Drawer = {
   Popover,
   DragBar,
   Body,
+  Backdrop,
 };

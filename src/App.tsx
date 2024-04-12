@@ -14,7 +14,7 @@ function App() {
       </button>
       <Drawer.Root open={open} onOpen={setOpen}>
         <Drawer.Popover>
-          <div className="absolute top-0 w-full h-full bg-black bg-opacity-20 overflow-hidden" />
+          <Drawer.Backdrop />
           <Drawer.Body>
             <Drawer.DragBar className="px-8 py-4">
               <div className="w-20 h-1 bg-neutral-200 rounded-full" />
