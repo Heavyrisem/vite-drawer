@@ -9,6 +9,12 @@ import React, {
 import { cn } from "../../../utils/classUtil";
 import { useDrawerContext } from "../hooks/useDrawerContext";
 import { getAxis } from "../utils";
+import { motion } from "framer-motion";
+
+type Transform = {
+  x?: string;
+  y?: string;
+};
 
 export interface BodyProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -25,49 +31,92 @@ export function Body({ className, children, ...rest }: BodyProps) {
 
   const transform = useMemo(() => {
     const axis = getAxis(direction);
-    let xTransform = "";
-    let yTransform = "";
+    let x = "";
+    let y = "";
+
+    if (axis === "x") y = `-50%`;
+    else x = `-50%`;
 
     if (open) {
-      if (axis === "x") xTransform = `translateX(${dragDelta}px)`;
-      else yTransform = `translateY(${dragDelta}px)`;
+      if (axis === "x") x = `${dragDelta}px`;
+      else y = `${dragDelta}px`;
     }
 
     if (open === false) {
-      if (direction === "bottom") yTransform = `translateY(100%)`;
-      if (direction === "top") yTransform = `translateY(-100%)`;
-      if (direction === "left") xTransform = `translateX(-100%)`;
-      if (direction === "right") xTransform = `translateX(100%)`;
+      if (direction === "bottom") y = `100%`;
+      if (direction === "top") y = `-100%`;
+      if (direction === "left") x = `-100%`;
+      if (direction === "right") x = `100%`;
     }
 
-    return [xTransform, yTransform].join(" ");
+    return { x: x || undefined, y: y || undefined };
   }, [direction, dragDelta, open]);
 
-  const handleTransitionEnd = useCallback(() => {
-    // if (open === false) setSafeToDetach(true);
-  }, []);
+  // const handleTransitionEnd = useCallback(() => {
+  // if (open === false) setSafeToDetach(true);
+  // }, []);
+
+  console.log(transform);
 
   return (
-    <div
+    <motion.div
       className={cn(
-        "absolute bg-white rounded-xl p-4 duration-0",
+        "absolute bg-white rounded-xl p-4",
         {
-          "left-1/2 bottom-0": direction === "bottom",
-          "left-1/2 top-0": direction === "top",
-          "top-1/2 left-0": direction === "left",
-          "top-1/2 right-0": direction === "right",
+          // "left-1/2 bottom-0": direction === "bottom",
+          // "left-1/2 top-0": direction === "top",
+          // "top-1/2 left-0": direction === "left",
+          // "top-1/2 right-0": direction === "right",
           // hidden: safeToDetach === true,
         },
         className
       )}
-      style={{
-        transform: [centerTransform, transform].join(" "),
-        transition: `transform ${dragDelta ? 0 : 1000}ms ease-in-out 0s`,
+      initial={[direction]}
+      // initial={{ x: "-50%", y: "-50%" }}
+      custom={transform}
+      variants={{
+        bottom: {
+          left: "50%",
+          bottom: 0,
+        },
+        top: {
+          left: "50%",
+          top: 0,
+        },
+        left: {
+          top: "50%",
+          left: 0,
+        },
+        right: {
+          top: "50%",
+          right: 0,
+        },
+        open: (transform: Transform) => ({
+          background: "blue",
+          // opacity: 1,
+          // display: "block",
+          ...transform,
+        }),
+        close: {
+          background: "red",
+          // opacity: 0,
+          // display: "none",
+          display: "none",
+        },
       }}
-      onTransitionEnd={handleTransitionEnd}
-      {...rest}
+      animate={[direction, open ? "open" : "close"]}
+      transition={{
+        // type: "spring",
+        // damping: 100,
+        // stiffness: 300,
+        duration: dragDelta ? 0 : 1,
+      }}
+      // style={{
+      //   transition: `transform ${dragDelta ? 0 : 1000}ms ease-in-out 0s`,
+      // }}
+      // onTransitionEnd={handleTransitionEnd}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
