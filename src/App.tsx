@@ -12,21 +12,21 @@ function App() {
       >
         Open
       </button>
-      <Drawer.Root open={open} onOpen={setOpen}>
+      <Drawer.Root open={open} onOpen={setOpen} direction="bottom">
         <Drawer.Popover>
           <Drawer.Backdrop />
           <Drawer.Body>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
+            <div>Content</div>
             <Drawer.DragBar className="px-8 py-4">
               <div className="w-20 h-1 bg-neutral-200 rounded-full" />
             </Drawer.DragBar>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
-            <div>Content</div>
           </Drawer.Body>
         </Drawer.Popover>
       </Drawer.Root>

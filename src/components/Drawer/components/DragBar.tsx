@@ -1,11 +1,12 @@
 import React from "react";
-import { getAxis, registDragEvent } from "../utils";
+import { registDragEvent } from "../utils";
 import { useDrawerContext } from "../hooks/useDrawerContext";
 
 export interface DragBarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function DragBar({ className, children, ...rest }: DragBarProps) {
-  const { direction, setDragDelta, setOpen } = useDrawerContext();
+  const { direction, closeThreshold, setDragDelta, setOpen } =
+    useDrawerContext();
 
   return (
     <div
@@ -13,17 +14,31 @@ export function DragBar({ className, children, ...rest }: DragBarProps) {
       {...rest}
       {...registDragEvent({
         onDragChange: (deltaX, deltaY) => {
-          if (getAxis(direction) === "x") setDragDelta(deltaX);
-          else setDragDelta(deltaY);
+          if (direction === "top") {
+            if (deltaY < 0) setDragDelta(deltaY);
+            else setDragDelta(Math.log(deltaY) * 2);
+          }
+          if (direction === "bottom") {
+            if (deltaY > 0) setDragDelta(deltaY);
+            else setDragDelta(Math.log(Math.abs(deltaY)) * -2);
+          }
+          if (direction === "left") {
+            if (deltaX < 0) setDragDelta(deltaX);
+            else setDragDelta(Math.log(deltaX) * 2);
+          }
+          if (direction === "right") {
+            if (deltaX > 0) setDragDelta(deltaX);
+            else setDragDelta(Math.log(Math.abs(deltaX)) * -2);
+          }
         },
         onDragEnd: (deltaX, deltaY) => {
           setDragDelta(0);
 
-          let dragDelta;
-          if (getAxis(direction) === "x") dragDelta = deltaX;
-          else dragDelta = deltaY;
-          console.log({ dragDelta, setOpen });
-          if (dragDelta >= 50) setOpen(false);
+          if (direction === "top" && deltaY <= -closeThreshold) setOpen(false);
+          if (direction === "bottom" && deltaY >= closeThreshold)
+            setOpen(false);
+          if (direction === "left" && deltaX <= -closeThreshold) setOpen(false);
+          if (direction === "right" && deltaX >= closeThreshold) setOpen(false);
         },
       })}
     >

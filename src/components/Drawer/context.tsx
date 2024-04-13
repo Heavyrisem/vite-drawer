@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useControlled } from "../../hooks/useControlled";
-import usePrevious from "../../hooks/usePrevious";
 
 interface DrawerContextState {
   direction: "top" | "left" | "right" | "bottom";
+  closeThreshold: number;
   dragDelta: number;
   setDragDelta: React.Dispatch<React.SetStateAction<number>>;
   open: boolean;
@@ -12,6 +12,7 @@ interface DrawerContextState {
 
 export const DrawerContext = React.createContext<DrawerContextState>({
   direction: "bottom",
+  closeThreshold: 0,
   dragDelta: 0,
   setDragDelta: () => {},
   open: false,
@@ -19,15 +20,28 @@ export const DrawerContext = React.createContext<DrawerContextState>({
 });
 
 export interface DrawerContextProviderProps {
+  /** @description default open 여부 */
   defaultOpen?: boolean;
+  /** @description open 여부 */
   open?: boolean;
+  /**
+   * @description 닫기 제한 거리
+   * @default closeThreshold=50
+   */
+  closeThreshold?: DrawerContextState["closeThreshold"];
+  /**
+   * @description 스크롤 방향
+   * @default direction="bottom"
+   */
   direction?: DrawerContextState["direction"];
+  /** @description open 값 변경 이벤트 */
   onOpen?: (open: boolean) => void;
   children?: React.ReactNode;
 }
 
 export function DrawerContextProvider({
   open: openProps,
+  closeThreshold = 50,
   defaultOpen = false,
   direction = "bottom",
   onOpen,
@@ -50,6 +64,7 @@ export function DrawerContextProvider({
         open,
         setOpen: handleOpen,
         direction,
+        closeThreshold,
         dragDelta,
         setDragDelta,
       }}
